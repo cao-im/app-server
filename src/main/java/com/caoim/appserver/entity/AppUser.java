@@ -17,6 +17,8 @@ public class AppUser {
 
     private String nickname;
 
+    private Long imUserId;
+
     private String imToken;
 
     private String avatar;

@@ -14,6 +14,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(1002, "用户不存在"),
     PASSWORD_ERROR(1003, "密码错误"),
     TOKEN_INVALID(1004, "Token无效或已过期"),
+    IM_SERVICE_ERROR(1005, "IM服务异常"),
     INTERNAL_ERROR(5000, "服务器内部错误");
 
     private final int code;
