@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.caoim.imcore.api.ImService;
 import com.caoim.imcore.client.ImFeignClient;
 import com.caoim.imcore.common.Result;
+import com.caoim.imcore.dto.FriendDTO;
 import com.caoim.imcore.dto.GroupCreateDTO;
 import com.caoim.imcore.dto.MessageSendDTO;
 import com.caoim.imcore.entity.*;
@@ -125,8 +126,8 @@ public class ImClientService implements ImService {
     }
 
     @Override
-    public List<Friend> getFriends(Long userId) {
-        Result<List<Friend>> result = imFeignClient.getFriends(userId);
+    public List<FriendDTO> getFriends(Long userId) {
+        Result<List<FriendDTO>> result = imFeignClient.getFriends(userId);
         return result.getData();
     }
 
