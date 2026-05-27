@@ -21,7 +21,7 @@
 │                                                     │
 │  im-server (IM核心)                                  │
 │  ├── im-core (JAR) ←── app-server 引用这个           │
-│  └── im-boot (独立运行, 端口8081)                    │
+│  └── im-boot (独立运行, 默认端口8080)                │
 │                                                     │
 └─────────────────────────────────────────────────────┘
 ```
@@ -31,7 +31,7 @@
 | 项目 | 职责 | 端口 | 数据库 |
 |------|------|------|--------|
 | **app-server** | C端用户认证（登录/注册/Token） | 8080 | `cao_im_app_server` |
-| **im-server/im-boot** | IM核心业务（消息/群组/好友/WebSocket） | 8081 | `cao_im_db` |
+| **im-server/im-boot** | IM核心业务（消息/群组/好友/WebSocket） | 8080（默认，可配置） | `cao_im_db` |
 | **im-server/im-core** | IM核心库JAR，被app-server依赖调用 | - | - |
 
 ---
