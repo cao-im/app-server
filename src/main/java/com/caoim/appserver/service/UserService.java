@@ -60,6 +60,9 @@ public class UserService extends ServiceImpl<UserMapper, AppUser> {
             Result<Map<String, Object>> imResult = imFeignClient.loginUser(imLoginDTO);
             if (imResult != null && imResult.getCode() == 200 && imResult.getData() != null) {
                 result.put("imToken", imResult.getData().get("token"));
+                if (imResult.getData().get("refreshToken") != null) {
+                    result.put("imRefreshToken", imResult.getData().get("refreshToken"));
+                }
                 log.info("IM 登录成功: username={}", username);
             } else {
                 log.error("IM 登录失败: username={}, result={}", username, imResult);
@@ -106,6 +109,9 @@ public class UserService extends ServiceImpl<UserMapper, AppUser> {
         Map<String, Object> result = new HashMap<>();
         result.put("user", convertToDTO(user));
         result.put("imToken", imResult.getData().get("token"));
+        if (imResult.getData().get("refreshToken") != null) {
+            result.put("imRefreshToken", imResult.getData().get("refreshToken"));
+        }
         log.info("用户注册成功并关联IM用户: username={}, appUserId={}, imUserId={}", username, user.getId(), imUser.getId());
 
         return result;

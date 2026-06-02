@@ -30,7 +30,7 @@ public class AuthController {
     private JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/api/client/login")
-    @Operation(summary = "C端用户登录", description = "客户端登录获取IM Token（密码需先做MD5加密后传输）")
+    @Operation(summary = "C端用户登录", description = "客户端登录获取Token（密码需先做MD5加密后传输）")
     public Result<Map<String, Object>> login(@Valid @RequestBody LoginDTO loginDTO) {
         Map<String, Object> userServiceResult = userService.clientLogin(loginDTO.getUsername(), loginDTO.getPassword());
         String token = jwtTokenUtil.generateToken(loginDTO.getUsername());
@@ -40,11 +40,14 @@ public class AuthController {
         if (userServiceResult.get("imToken") != null) {
             data.put("imToken", userServiceResult.get("imToken"));
         }
+        if (userServiceResult.get("imRefreshToken") != null) {
+            data.put("imRefreshToken", userServiceResult.get("imRefreshToken"));
+        }
         return Result.success(data);
     }
 
     @PostMapping("/api/client/register")
-    @Operation(summary = "C端用户注册", description = "新用户注册并获取IM Token（密码需先做MD5加密后传输）")
+    @Operation(summary = "C端用户注册", description = "新用户注册并获取Token（密码需先做MD5加密后传输）")
     public Result<Map<String, Object>> register(@Valid @RequestBody RegisterDTO registerDTO) {
         Map<String, Object> userServiceResult = userService.clientRegister(
                 registerDTO.getUsername(),
@@ -58,11 +61,14 @@ public class AuthController {
         if (userServiceResult.get("imToken") != null) {
             data.put("imToken", userServiceResult.get("imToken"));
         }
+        if (userServiceResult.get("imRefreshToken") != null) {
+            data.put("imRefreshToken", userServiceResult.get("imRefreshToken"));
+        }
         return Result.success(data);
     }
 
     @PostMapping("/api/client/refresh-token")
-    @Operation(summary = "Token续期", description = "使用当前有效Token换取新的Token（Token即将过期时调用）")
+    @Operation(summary = "App Token续期", description = "刷新应用服务器的AccessToken（用于App API认证）")
     public Result<Map<String, Object>> refreshToken(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader == null || authHeader.isBlank()) {
             throw new BusinessException(ErrorCode.BAD_REQUEST.getCode(), "缺少Authorization请求头");
