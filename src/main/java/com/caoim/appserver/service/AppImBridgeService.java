@@ -34,17 +34,19 @@ public class AppImBridgeService {
         return imService.getGroupHistory(groupId, page, size);
     }
 
-    public List<Conversation> getConversations(Long userId) {
-        return imService.getConversations(userId);
-    }
+    // TODO: Conversation 实体和 getConversations/markAsRead 方法尚未在 im-core 中实现
+    // public List<Conversation> getConversations(Long userId) {
+    //     return imService.getConversations(userId);
+    // }
 
     public long getUnreadCount(Long userId) {
         return imService.getUnreadCount(userId);
     }
 
-    public void markConversationRead(Long userId, Long conversationId) {
-        imService.markAsRead(userId, conversationId);
-    }
+    // TODO: markAsRead 方法尚未在 ImService 接口中定义
+    // public void markConversationRead(Long userId, Long conversationId) {
+    //     imService.markAsRead(userId, conversationId);
+    // }
 
     public Group createGroup(String name, Long ownerId, List<Long> memberIds) {
         return imService.createGroup(name, ownerId, memberIds);

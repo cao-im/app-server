@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.caoim.imcore.api.ImService;
 import com.caoim.imcore.client.ImFeignClient;
 import com.caoim.imcore.common.Result;
-import com.caoim.imcore.dto.FriendDTO;
+import com.caoim.imcore.dto.ContactDTO;
 import com.caoim.imcore.dto.GroupCreateDTO;
 import com.caoim.imcore.dto.MessageSendDTO;
 import com.caoim.imcore.entity.*;
@@ -55,10 +55,11 @@ public class ImClientService implements ImService {
         return result.getData().getRecords();
     }
 
-    @Override
-    public void markAsRead(Long userId, Long conversationId) {
-        imFeignClient.clearUnreadCount(userId, conversationId);
-    }
+    // TODO: markAsRead 方法尚未在 ImService 接口中定义，且 im-server 端尚未实现
+    // @Override
+    // public void markAsRead(Long userId, Long conversationId) {
+    //     imFeignClient.clearUnreadCount(userId, conversationId);
+    // }
 
     @Override
     public long getUnreadCount(Long userId) {
@@ -66,21 +67,24 @@ public class ImClientService implements ImService {
         return result.getData();
     }
 
-    @Override
-    public List<Conversation> getConversations(Long userId) {
-        Result<List<Conversation>> result = imFeignClient.getConversations(userId);
-        return result.getData();
-    }
+    // TODO: Conversation 实体尚未在 im-core 中创建，getConversations 尚未实现
+    // @Override
+    // public List<Conversation> getConversations(Long userId) {
+    //     Result<List<Conversation>> result = imFeignClient.getConversations(userId);
+    //     return result.getData();
+    // }
 
-    @Override
-    public void clearUnread(Long conversationId) {
-        throw new UnsupportedOperationException("请使用 markAsRead(userId, conversationId)");
-    }
+    // TODO: clearUnread 方法尚未在 ImService 接口中定义
+    // @Override
+    // public void clearUnread(Long conversationId) {
+    //     throw new UnsupportedOperationException("请使用 markAsRead(userId, conversationId)");
+    // }
 
-    @Override
-    public void deleteConversation(Long userId, Long conversationId) {
-        imFeignClient.deleteConversation(userId, conversationId);
-    }
+    // TODO: deleteConversation 方法尚未在 ImFeignClient 中定义
+    // @Override
+    // public void deleteConversation(Long userId, Long conversationId) {
+    //     imFeignClient.deleteConversation(userId, conversationId);
+    // }
 
     @Override
     public Group createGroup(String name, Long ownerId, List<Long> memberIds) {
@@ -100,6 +104,7 @@ public class ImClientService implements ImService {
 
     @Override
     public void addGroupMembers(Long groupId, List<Long> userIds) {
+        // TODO: im-server 尚未提供群成员增删的 Feign 接口，暂时通过好友请求接口模拟（需后续修正）
         for (Long userId : userIds) {
             imFeignClient.sendFriendRequest(groupId, userId);
         }
@@ -107,7 +112,8 @@ public class ImClientService implements ImService {
 
     @Override
     public void removeGroupMember(Long groupId, Long userId) {
-        imFeignClient.deleteFriend(groupId, userId);
+        // TODO: im-server 尚未提供群成员删除的 Feign 接口，暂时通过好友删除接口模拟（需后续修正）
+        imFeignClient.deleteContact(groupId, userId);
     }
 
     @Override
@@ -125,14 +131,26 @@ public class ImClientService implements ImService {
         imFeignClient.rejectFriendRequest(userId, friendId);
     }
 
+    // TODO: getFriends/deleteFriend 尚未在 ImService 接口中定义，FriendDTO 类也不存在
+    // @Override
+    // public List<FriendDTO> getFriends(Long userId) {
+    //     Result<List<FriendDTO>> result = imFeignClient.getFriends(userId);
+    //     return result.getData();
+    // }
+
+    // @Override
+    // public void deleteFriend(Long userId, Long friendId) {
+    //     imFeignClient.deleteFriend(userId, friendId);
+    // }
+
     @Override
-    public List<FriendDTO> getFriends(Long userId) {
-        Result<List<FriendDTO>> result = imFeignClient.getFriends(userId);
-        return result.getData();
+    public void deleteContact(Long userId, Long contactId) {
+        imFeignClient.deleteContact(userId, contactId);
     }
 
     @Override
-    public void deleteFriend(Long userId, Long friendId) {
-        imFeignClient.deleteFriend(userId, friendId);
+    public List<ContactDTO> getContacts(Long userId) {
+        Result<List<ContactDTO>> result = imFeignClient.getContacts(userId);
+        return result.getData();
     }
 }

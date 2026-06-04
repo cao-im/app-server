@@ -5,6 +5,7 @@ import com.caoim.appserver.common.ErrorCode;
 import com.caoim.appserver.common.Result;
 import com.caoim.appserver.dto.LoginDTO;
 import com.caoim.appserver.dto.RegisterDTO;
+import com.caoim.appserver.dto.UpdateProfileDTO;
 import com.caoim.appserver.dto.UserDTO;
 import com.caoim.appserver.security.JwtTokenUtil;
 import com.caoim.appserver.service.UserService;
@@ -96,6 +97,15 @@ public class AuthController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         UserDTO userDTO = userService.getUserInfo(username);
+        return Result.success(userDTO);
+    }
+
+    @PutMapping("/api/user/profile")
+    @Operation(summary = "更新个人资料", description = "修改昵称、头像等个人信息（需要Token认证）")
+    public Result<UserDTO> updateProfile(@Valid @RequestBody UpdateProfileDTO dto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserDTO userDTO = userService.updateProfile(username, dto);
         return Result.success(userDTO);
     }
 }

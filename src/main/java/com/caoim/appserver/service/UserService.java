@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.caoim.appserver.common.BusinessException;
 import com.caoim.appserver.common.ErrorCode;
 import com.caoim.appserver.dao.UserMapper;
+import com.caoim.appserver.dto.UpdateProfileDTO;
 import com.caoim.appserver.dto.UserDTO;
 import com.caoim.appserver.entity.AppUser;
 import com.caoim.imcore.client.ImFeignClient;
@@ -151,6 +152,46 @@ public class UserService extends ServiceImpl<UserMapper, AppUser> {
         if (user == null) {
             throw new BusinessException(ErrorCode.USER_NOT_FOUND);
         }
+        return convertToDTO(user);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public UserDTO updateProfile(String username, UpdateProfileDTO dto) {
+        AppUser user = userMapper.selectByUsername(username);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        // 更新本地 app_user 表
+        if (dto.getNickname() != null) {
+            user.setNickname(dto.getNickname());
+        }
+        if (dto.getAvatar() != null) {
+            user.setAvatar(dto.getAvatar());
+        }
+        if (dto.getEmail() != null) {
+            user.setEmail(dto.getEmail());
+        }
+        if (dto.getPhone() != null) {
+            user.setPhone(dto.getPhone());
+        }
+
+        updateById(user);
+
+        // 同步更新 im-server
+        if (user.getImUserId() != null) {
+            try {
+                com.caoim.imcore.dto.UpdateProfileDTO imDto = new com.caoim.imcore.dto.UpdateProfileDTO();
+                imDto.setNickname(dto.getNickname());
+                imDto.setAvatar(dto.getAvatar());
+                imFeignClient.updateUserProfile(imDto, user.getImUserId());
+                log.info("用户资料已同步到IM服务: username={}, imUserId={}", username, user.getImUserId());
+            } catch (Exception e) {
+                log.error("同步用户资料到IM服务失败: username={}, error={}", username, e.getMessage(), e);
+                // 本地已成功，IM同步失败不回滚
+            }
+        }
+
         return convertToDTO(user);
     }
 }
