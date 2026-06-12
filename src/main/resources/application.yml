@@ -69,3 +69,41 @@ logging:
   level:
     com.caoim.imcore.config.ApiLogFilter: DEBUG
     org.springframework.web.filter: DEBUG
+
+# 文件上传配置
+file:
+  # 存储类型：local-本地存储, cos-腾讯云COS, oss-阿里云OSS
+  type: local
+  # 本地存储根路径
+  local-path: E:/ProjectsCode/clb_projects/cao_im/app-server/target/caoim-files
+  # 文件访问域名前缀（用于拼接完整URL，本地开发用IP，部署时改为实际域名）
+  domain: http://127.0.0.1:8081
+  # 单文件最大大小（默认10MB）
+  max-size: 10MB
+  # 允许上传的文件扩展名（白名单）
+  allowed-extensions:
+    - jpg
+    - jpeg
+    - png
+    - gif
+    - bmp
+    - webp
+    - pdf
+    - doc
+    - docx
+    - xls
+    - xlsx
+    - ppt
+    - pptx
+    - txt
+    - md
+    - zip
+    - rar
+    - mp3
+    - mp4
+    - avi
+    - mov
+  # 是否按日期分子目录存储（yyyy/MM/dd）
+  date-path: true
+  # 静态资源访问路径前缀
+  prefix: /profile
