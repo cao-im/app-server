@@ -75,7 +75,7 @@ file:
   # 存储类型：local-本地存储, cos-腾讯云COS, oss-阿里云OSS
   type: local
   # 本地存储根路径
-  local-path: E:/ProjectsCode/clb_projects/cao_im/app-server/target/caoim-files
+  local-path: ./caoim-files
   # 文件访问域名前缀（用于拼接完整URL，本地开发用IP，部署时改为实际域名）
   domain: http://127.0.0.1:8081
   # 单文件最大大小（默认10MB）
