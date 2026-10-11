@@ -99,8 +99,9 @@ public class UserService extends ServiceImpl<UserMapper, AppUser> {
 
         Result<Map<String, Object>> imResult = imFeignClient.registerUser(imRegisterDTO);
         if (imResult == null || imResult.getCode() != 200 || imResult.getData() == null) {
+            String message = imResult != null && imResult.getMessage() != null ? imResult.getMessage() : "请稍后重试";
             log.error("IM 用户创建失败: username={}, result={}", username, imResult);
-            throw new BusinessException(ErrorCode.IM_SERVICE_ERROR.getCode(), "IM服务创建用户失败，请稍后重试");
+            throw new BusinessException(ErrorCode.IM_SERVICE_ERROR.getCode(), "IM服务创建用户失败: " + message);
         }
 
         User imUser = convertToUser(imResult.getData().get("user"));
