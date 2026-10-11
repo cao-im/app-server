@@ -27,6 +27,12 @@ public class FileUploadConfig {
     @PostConstruct
     public void init() {
         this.maxSize = parseSize(maxSizeStr);
+        // 相对路径按进程工作目录展开。否则 Tomcat 会把 ./caoim-files 写到临时 work 目录。
+        File root = new File(localPath);
+        if (!root.isAbsolute()) {
+            root = new File(System.getProperty("user.dir"), localPath);
+        }
+        this.localPath = root.getAbsolutePath();
     }
 
     private long parseSize(String sizeStr) {
@@ -118,8 +124,12 @@ public class FileUploadConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addResourceHandlers(ResourceHandlerRegistry registry) {
+                String location = new File(getLocalPath()).toURI().toString();
+                if (!location.endsWith("/")) {
+                    location = location + "/";
+                }
                 registry.addResourceHandler(getPrefix() + "/**")
-                        .addResourceLocations("file:" + getLocalPath() + File.separator);
+                        .addResourceLocations(location);
             }
         };
     }

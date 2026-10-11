@@ -70,14 +70,16 @@ public class LocalFileServiceImpl implements FileService {
         }
         String localFilePath = localDirBuilder.append(File.separator).append(newFileName).toString();
 
-        File destFile = new File(localFilePath);
+        File destFile = new File(localFilePath).getAbsoluteFile();
         File parentDir = destFile.getParentFile();
-        if (!parentDir.exists()) {
-            parentDir.mkdirs();
+        if (parentDir != null && !parentDir.exists() && !parentDir.mkdirs()) {
+            log.error("创建上传目录失败: {}", parentDir.getAbsolutePath());
+            throw new BusinessException(ErrorCode.FILE_UPLOAD_ERROR);
         }
 
         try {
-            file.transferTo(destFile);
+            // 使用 Path 写入绝对路径，避免 Part.write 把相对路径解析到 Tomcat 临时目录
+            file.transferTo(destFile.toPath());
         } catch (IOException e) {
             log.error("文件上传失败", e);
             throw new BusinessException(ErrorCode.FILE_UPLOAD_ERROR);
