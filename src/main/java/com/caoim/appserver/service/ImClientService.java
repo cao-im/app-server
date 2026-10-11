@@ -92,7 +92,7 @@ public class ImClientService implements ImService {
         dto.setName(name);
         dto.setMemberIds(memberIds);
 
-        Result<Group> result = imFeignClient.createGroup(dto);
+        Result<Group> result = imFeignClient.createGroup(ownerId, dto);
         return result.getData();
     }
 
@@ -104,16 +104,17 @@ public class ImClientService implements ImService {
 
     @Override
     public void addGroupMembers(Long groupId, List<Long> userIds) {
-        // TODO: im-server 尚未提供群成员增删的 Feign 接口，暂时通过好友请求接口模拟（需后续修正）
+        Result<Group> groupResult = imFeignClient.getGroupInfo(groupId);
+        Long operatorId = groupResult.getData().getOwnerId();
         for (Long userId : userIds) {
-            imFeignClient.sendFriendRequest(groupId, userId);
+            imFeignClient.addGroupMember(groupId, userId, operatorId);
         }
     }
 
     @Override
     public void removeGroupMember(Long groupId, Long userId) {
-        // TODO: im-server 尚未提供群成员删除的 Feign 接口，暂时通过好友删除接口模拟（需后续修正）
-        imFeignClient.deleteContact(groupId, userId);
+        Result<Group> groupResult = imFeignClient.getGroupInfo(groupId);
+        imFeignClient.removeGroupMember(groupId, userId, groupResult.getData().getOwnerId());
     }
 
     @Override

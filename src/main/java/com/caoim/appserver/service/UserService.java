@@ -59,17 +59,27 @@ public class UserService extends ServiceImpl<UserMapper, AppUser> {
             imLoginDTO.setPassword(md5Password);
 
             Result<Map<String, Object>> imResult = imFeignClient.loginUser(imLoginDTO);
-            if (imResult != null && imResult.getCode() == 200 && imResult.getData() != null) {
-                result.put("imToken", imResult.getData().get("token"));
-                if (imResult.getData().get("refreshToken") != null) {
-                    result.put("imRefreshToken", imResult.getData().get("refreshToken"));
+            if (imResult != null && imResult.getCode() == 1006) {
+                Result<Void> bindResult = imFeignClient.bindPassword(imLoginDTO);
+                if (bindResult == null || bindResult.getCode() != 200) {
+                    throw new BusinessException(ErrorCode.IM_SERVICE_ERROR.getCode(), "IM密码初始化失败");
                 }
-                log.info("IM 登录成功: username={}", username);
-            } else {
-                log.error("IM 登录失败: username={}, result={}", username, imResult);
+                imResult = imFeignClient.loginUser(imLoginDTO);
             }
+            if (imResult == null || imResult.getCode() != 200 || imResult.getData() == null) {
+                String message = imResult != null ? imResult.getMessage() : "IM服务无响应";
+                throw new BusinessException(ErrorCode.IM_SERVICE_ERROR.getCode(), "IM登录失败: " + message);
+            }
+            result.put("imToken", imResult.getData().get("token"));
+            if (imResult.getData().get("refreshToken") != null) {
+                result.put("imRefreshToken", imResult.getData().get("refreshToken"));
+            }
+            log.info("IM 登录成功: username={}", username);
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
             log.error("调用 IM 服务登录失败: username={}, error={}", username, e.getMessage(), e);
+            throw new BusinessException(ErrorCode.IM_SERVICE_ERROR.getCode(), "调用IM服务登录失败");
         }
 
         return result;
