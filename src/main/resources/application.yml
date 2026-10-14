@@ -104,6 +104,12 @@ file:
     - zip
     - rar
     - mp3
+    - wav
+    - m4a
+    - aac
+    - amr
+    - ogg
+    - opus
     - mp4
     - avi
     - mov
