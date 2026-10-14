@@ -175,16 +175,21 @@ public class UserService extends ServiceImpl<UserMapper, AppUser> {
 
         // 更新本地 app_user 表
         if (dto.getNickname() != null) {
-            user.setNickname(dto.getNickname());
+            String nickname = dto.getNickname().trim();
+            if (nickname.isEmpty() || nickname.length() > 20) {
+                throw new BusinessException(ErrorCode.BAD_REQUEST.getCode(), "昵称需为 1-20 个字符");
+            }
+            dto.setNickname(nickname);
+            user.setNickname(nickname);
         }
         if (dto.getAvatar() != null) {
-            user.setAvatar(dto.getAvatar());
+            user.setAvatar(dto.getAvatar().trim());
         }
         if (dto.getEmail() != null) {
-            user.setEmail(dto.getEmail());
+            user.setEmail(dto.getEmail().trim());
         }
         if (dto.getPhone() != null) {
-            user.setPhone(dto.getPhone());
+            user.setPhone(dto.getPhone().trim());
         }
 
         updateById(user);
@@ -195,6 +200,8 @@ public class UserService extends ServiceImpl<UserMapper, AppUser> {
                 com.caoim.imcore.dto.UpdateProfileDTO imDto = new com.caoim.imcore.dto.UpdateProfileDTO();
                 imDto.setNickname(dto.getNickname());
                 imDto.setAvatar(dto.getAvatar());
+                imDto.setEmail(dto.getEmail());
+                imDto.setPhone(dto.getPhone());
                 imFeignClient.updateUserProfile(imDto, user.getImUserId());
                 log.info("用户资料已同步到IM服务: username={}, imUserId={}", username, user.getImUserId());
             } catch (Exception e) {
