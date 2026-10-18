@@ -8,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class FileUploadConfig {
     private List<String> allowedExtensions = new ArrayList<>();
     private boolean datePath = true;
     private String prefix = "/profile";
+    private Oss oss = new Oss();
 
     @PostConstruct
     public void init() {
@@ -117,6 +119,126 @@ public class FileUploadConfig {
 
     public void setPrefix(String prefix) {
         this.prefix = prefix;
+    }
+
+    public Oss getOss() {
+        return oss;
+    }
+
+    public void setOss(Oss oss) {
+        this.oss = oss == null ? new Oss() : oss;
+    }
+
+    public boolean isObjectStorage() {
+        if (type == null) {
+            return false;
+        }
+        String value = type.trim().toLowerCase();
+        return "oss".equals(value) || "cos".equals(value) || "s3".equals(value);
+    }
+
+    public static class Oss {
+        private String endpoint = "";
+        private String region = "us-east-1";
+        private String bucket = "caoim";
+        private String accessKey = "";
+        private String secretKey = "";
+        private String publicUrl = "";
+        private boolean pathStyle = true;
+        private boolean publicRead = true;
+
+        public String resolvedPublicBase() {
+            if (publicUrl != null && !publicUrl.isBlank()) {
+                return trimSlash(publicUrl);
+            }
+            String root = trimSlash(endpoint);
+            if (pathStyle) {
+                return root + "/" + bucket;
+            }
+            URI uri = URI.create(root);
+            String port = uri.getPort() > 0 ? ":" + uri.getPort() : "";
+            String path = uri.getRawPath() == null ? "" : uri.getRawPath().trim();
+            while (path.startsWith("/")) {
+                path = path.substring(1);
+            }
+            path = trimSlash(path);
+            if (!path.isEmpty()) {
+                path = "/" + path;
+            }
+            return uri.getScheme() + "://" + bucket + "." + uri.getHost() + port + path;
+        }
+
+        private static String trimSlash(String value) {
+            String text = value == null ? "" : value.trim();
+            while (text.endsWith("/")) {
+                text = text.substring(0, text.length() - 1);
+            }
+            return text;
+        }
+
+        public String getEndpoint() {
+            return endpoint;
+        }
+
+        public void setEndpoint(String endpoint) {
+            this.endpoint = endpoint;
+        }
+
+        public String getRegion() {
+            return region;
+        }
+
+        public void setRegion(String region) {
+            this.region = region;
+        }
+
+        public String getBucket() {
+            return bucket;
+        }
+
+        public void setBucket(String bucket) {
+            this.bucket = bucket;
+        }
+
+        public String getAccessKey() {
+            return accessKey;
+        }
+
+        public void setAccessKey(String accessKey) {
+            this.accessKey = accessKey;
+        }
+
+        public String getSecretKey() {
+            return secretKey;
+        }
+
+        public void setSecretKey(String secretKey) {
+            this.secretKey = secretKey;
+        }
+
+        public String getPublicUrl() {
+            return publicUrl;
+        }
+
+        public void setPublicUrl(String publicUrl) {
+            this.publicUrl = publicUrl;
+        }
+
+        public boolean isPathStyle() {
+            return pathStyle;
+        }
+
+        public void setPathStyle(boolean pathStyle) {
+            this.pathStyle = pathStyle;
+        }
+
+        public boolean isPublicRead() {
+            return publicRead;
+        }
+
+        public void setPublicRead(boolean publicRead) {
+            this.publicRead = publicRead;
+        }
     }
 
     @Bean

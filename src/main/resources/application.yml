@@ -119,5 +119,16 @@ file:
     - mov
   # 是否按日期分子目录存储（yyyy/MM/dd）
   date-path: true
-  # 静态资源访问路径前缀
+  # 静态资源访问路径前缀。仅本地存储使用。
   prefix: /profile
+  # 对象存储。type 改为 oss、cos 或 s3 后，新上传的图片、语音、文件和视频进入 S3 兼容存储。
+  # 默认 local，继续写到上面的本地目录。手机打开文件时，public-url 要用电脑的局域网地址。
+  oss:
+    endpoint: http://127.0.0.1:9000
+    region: us-east-1
+    bucket: caoim
+    access-key: ""
+    secret-key: ""
+    public-url: ""
+    path-style: true
+    public-read: true
