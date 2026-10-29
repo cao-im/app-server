@@ -27,6 +27,13 @@ im:
     url: http://localhost:8080/api
     internal-token: caoim-dev-internal-token
 
+# 离线推送。push-server 启动并建库后把 enabled 改为 true。
+push:
+  server:
+    enabled: false
+    url: http://127.0.0.1:8083
+    internal-token: caoim-dev-internal-token
+
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
   type-aliases-package: com.caoim.appserver.entity
