@@ -84,7 +84,8 @@ file:
   type: local
   # 本地存储根路径
   local-path: ./caoim-files
-  # 文件访问域名前缀（用于拼接完整URL，本地开发用IP，部署时改为实际域名）
+  # 文件访问前缀。写成 127.0.0.1 / localhost 时，上传接口会改用请求里的 Host（手机局域网可打开）。
+  # 上线请改成公网域名，例如 https://files.example.com
   domain: http://127.0.0.1:8081
   # 单文件最大大小。视频消息按这个上限上传，普通文件仍由客户端限制为 10MB。
   max-size: 50MB
