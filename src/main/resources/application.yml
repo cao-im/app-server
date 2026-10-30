@@ -25,14 +25,14 @@ im:
   server:
     # IM核心服务地址（请根据实际部署的IM服务端口修改）
     url: http://localhost:8080/api
-    internal-token: caoim-dev-internal-token
+    internal-token: ${IM_INTERNAL_TOKEN:caoim-dev-internal-token}
 
 # 离线推送。push-server 启动并建库后把 enabled 改为 true。
 push:
   server:
     enabled: false
     url: http://127.0.0.1:8083
-    internal-token: caoim-dev-internal-token
+    internal-token: ${IM_INTERNAL_TOKEN:caoim-dev-internal-token}
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
@@ -48,7 +48,7 @@ mybatis-plus:
       logic-not-delete-value: 0
 
 jwt:
-  secret: CaoImSecretKey2024!@#$%ForJWTTokenGenerationAndValidation
+  secret: "${JWT_SECRET:CaoImSecretKey2024!@#$%ForJWTTokenGenerationAndValidation}"
   expiration: 604800000
   refresh-expiration: 604800000
   header: Authorization
